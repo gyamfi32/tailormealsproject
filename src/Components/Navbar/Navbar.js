@@ -1,8 +1,9 @@
 import React from "react";
 import "./Navbar.css";
-import logo from "../../Assets/Logo (1).png";
+import logo from '../Assets/Logo (1).png'
 import { Link } from "react-router-dom";
 import { Button, Navbar, Container, Nav } from "react-bootstrap";
+import LoginRegister from './auth/loginRegister';
 
 const MyNavbar = () => {
   return (
@@ -41,7 +42,7 @@ const MyNavbar = () => {
             <Nav.Link as={Link} to="/about" className="nav-link">
               User Profile
             </Nav.Link>
-            <Nav.Link as={Link} to="/about" className="nav-link">
+            <Nav.Link as={Link} to="/about" className="nav-link" onCclick={LoginRegister}>
               Login / Register
             </Nav.Link>
           </Nav>
