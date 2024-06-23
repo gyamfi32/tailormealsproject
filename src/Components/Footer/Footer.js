@@ -1,10 +1,11 @@
 import React from "react";
+import "./Footer.css"
 import { Container, Row, Col } from "react-bootstrap";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-light py-4">
+    <footer className="footer bg-light py-4" >
       <Container>
         <Row>
           <Col md={6} className="text-center text-md-left">

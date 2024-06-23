@@ -4,6 +4,8 @@ import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from "./auth";
 import { useAuth } from "../../../contexts/authContext";
 import { Navigate } from "react-router-dom";
+import Header from "../../Header/Header";
+import Footer from "../../Footer/Footer";
 
 const LoginRegister = () => {
   const { userLoggedIn } = useAuth();
@@ -51,8 +53,8 @@ const LoginRegister = () => {
 
   return (
     <div>
+      <Header />
       {userLoggedIn && <Navigate to={"/home"} replace={true} />}
-
       <div className={`wrapper${action}`}>
         <div className="form-box login">
           <form onSubmit={onSubmit}>
@@ -134,6 +136,7 @@ const LoginRegister = () => {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

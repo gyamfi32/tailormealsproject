@@ -1,20 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 body {
   font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex; 
+  justify-content: safe;
   min-height: 100vh;
-  background: url('./Assets/pexels-vanessa-loring-5971864.jpg') 
-  no-repeat;
+  background: url('./Assets/pexels-vanessa-loring-5971864.jpg');  
   background-size: cover;
   background-position: center;
 }
+
+main { 
+  min-height: 80vh;
+}
+
+
+
 
