@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import "./LoginRegister.css";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from "./auth";
+import {
+  doSignInWithEmailAndPassword,
+  doSignInWithGoogle,
+  doCreateUserWithEmailAndPassword,
+} from "./auth";
 import { useAuth } from "../../../contexts/authContext";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../../Header/Header";
 import Footer from "../../Footer/Footer";
 
 const LoginRegister = () => {
   const { userLoggedIn } = useAuth();
+  const  navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [action, setAction] = useState("");
@@ -23,16 +29,32 @@ const LoginRegister = () => {
     setAction(" ");
   };
 
-  const onSubmit = async (e) => {
+  const onSubmitLogin = async (e) => {
     e.preventDefault();
     if (!isSigningIn) {
       setIsSigningIn(true);
       try {
         await doSignInWithEmailAndPassword(email, password);
         setIsSigningIn(false);
+        navigate("/home");
       } catch (error) {
         setIsSigningIn(false);
         setErrorMessage("Error logging in: " + error.message);
+      }
+    }
+  };
+
+  const onSubmitRegister = async (e) => {
+    e.preventDefault();
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        await doCreateUserWithEmailAndPassword(email, password);
+        setIsSigningIn(false);
+        navigate("/home");
+      } catch (error) {
+        setIsSigningIn(false);
+        setErrorMessage("Error registering: " + error.message);
       }
     }
   };
@@ -54,13 +76,22 @@ const LoginRegister = () => {
   return (
     <div>
       <Header />
-      {userLoggedIn && <Navigate to={"/home"} replace={true} />}
+      {userLoggedIn && navigate("/home")}
       <div className={`wrapper${action}`}>
         <div className="form-box login">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmitLogin}>
             <h1>Login</h1>
             <div className="input-box">
-              <input type="text" placeholder="Username" required />
+              <input
+                type="email"
+                placeholder="Email"
+                required
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                setErrorMessage("");
+              }}
+              />
               <FaUser className="icon" />
             </div>
             <div className="input-box">
@@ -69,16 +100,19 @@ const LoginRegister = () => {
                 placeholder="Password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                setErrorMessage("");                
+              }}
               />
               <FaLock className="icon" />
             </div>
             {errorMessage && <p className="error">{errorMessage}</p>}
             <div className="remember-forgot">
-              <lable>
+              <label>
                 <input type="checkbox" />
                 Remember me
-              </lable>
+              </label>
               <a href="#">Forgot password?</a>
             </div>
 
@@ -97,10 +131,19 @@ const LoginRegister = () => {
           </form>
         </div>
         <div className="form-box register">
-          <form action="">
+          <form onSubmit={onSubmitRegister}>
             <h1>Registration</h1>
             <div className="input-box">
-              <input type="text" placeholder="Username" required />
+              <input 
+              type="text" 
+              placeholder="Username" 
+              required 
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              setErrorMessage("");
+            }}
+              />
               <FaUser className="icon" />
             </div>
             <div className="input-box">
@@ -109,15 +152,27 @@ const LoginRegister = () => {
                 placeholder="Email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                setEmail(e.target.value);
+              setErrorMessage("");
+            }}
               />
               <FaEnvelope className="icon" />
             </div>
             <div className="input-box">
-              <input type="password" placeholder="Password" required />
+              <input 
+              type="password" 
+              placeholder="Password" 
+              required 
+              value={password}
+              onChange={(e) => {
+              setPassword(e.target.value);
+            setErrorMessage("");
+              }}
+              />
               <FaLock className="icon" />
             </div>
-
+          {errorMessage && <p className="error">{errorMessage}</p>}
             <div className="remember-forgot">
               <label>
                 <input type="checkbox" />I agree to the terms & conditions
@@ -136,7 +191,6 @@ const LoginRegister = () => {
           </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

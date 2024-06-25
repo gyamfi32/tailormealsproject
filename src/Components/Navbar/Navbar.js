@@ -1,7 +1,6 @@
 import React from "react";
 import "./Navbar.css";
 import logo from "../../Assets/Logo (1).png";
-import { Link } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 
 function MyNavbar  ()  {
@@ -31,7 +30,7 @@ function MyNavbar  ()  {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="">
           <Nav className="navbar-nav">
-            <Nav.Link href="/" reloadDocument className="nav-item">
+            <Nav.Link href="/"className="nav-item">
               Home
             </Nav.Link>
             <Nav.Link 
@@ -43,13 +42,15 @@ function MyNavbar  ()  {
               Nutritional Info
             </Nav.Link>
             <Nav.Link 
-            conClicjto="/RecipeSearch" reloadDocument className="nav-item">
+            onClick={() => handleLinkClick("/RecipeSearch")} className="nav-item">
               Recipe Search
             </Nav.Link>
-            <Link to="/UserProfile" reloadDocument className="nav-item">
+            <Nav.Link 
+            onClick={() => handleLinkClick("UserProfile")} className="nav-item">
               User Profile
-            </Link>
-            <Nav.Link href="/LoginRegister/" reloadDocument className="nav-item">
+            </Nav.Link>
+            <Nav.Link 
+            onClick={() => handleLinkClick("LoginRegister")}  className="nav-item">
               Login / Register
             </Nav.Link>
           </Nav>
