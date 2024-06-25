@@ -1,59 +1,162 @@
-import React from "react";
-import { Card, Button, Form, Modal, ModalFooter} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
+import axios from "axios";
 
 const MealPlanning = () => {
-  const [show, setShow] = useState(false);
-  const [nutrients, setNutrients] = useState("");
+  const [meals, setMeals] = useState({ breakfast: [], lunch: [], dinner: [] });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = (mealType) => {
-    const nutrientsInfo = `Nutrients for ${mealType};
-    - Calories: 300
-    - Protein: 20g
-    carbs: 50g
-    - Fat: 10g`;
+  useEffect(() => {
+    fetchMealPlans();
+  }, []);
 
-    setNutrients(nutrientsInfo);
-    setShow(true);
+  const fetchMealPlans = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.get(
+        `https://api.spoonacular.com/mealplanner/generate`,
+        {
+          params: {
+            timeFrame: "day",
+            apiKey: "a2fa5157fc94457abbd67a6492d48b96", // Replace with your Spoonacular API key
+          },
+        }
+      );
+
+      const meals = response.data.meals.map((meal) => ({
+        id: meal.id,
+        title: meal.title,
+        image: `https://spoonacular.com/recipeImages/${meal.id}-312x231.jpg`, // Assuming this is how the image URLs are formed
+        nutrition: meal.nutrition, // Assuming this is how nutrition info is included
+        mealType: meal.mealType, // Assuming this field exists
+      }));
+      
+      setMeals({
+        breakfast: response.data.meals.filter(
+          (meal) => meal.mealType === "breakfast"
+        ),
+        lunch: response.data.meals.filter((meal) => meal.mealType === "lunch"),
+        dinner: response.data.meals.filter(
+          (meal) => meal.mealType === "dinner"
+        ),
+      });
+    } catch (error) {
+      setError(
+        "An error occurred while fetching meal plans. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleShowModal = (meal) => {
+    setSelectedMeal(meal);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMeal(null);
+    setShowModal(false);
   };
 
   return (
-    <div className="container mt-5">
+    <Container className="mt-5">
       <h1 className="text-center mb-4">Meal Planning</h1>
-      <div className="row">
-        {["Breakfast", "Lunch", "Dinner"].map((meal) => (
-          <div className="col-md-4" key={meal}>
-            <card className="mb-4">
-              <Card.Body>
-                <Card.Title>{meal}</Card.Title>
-                <form>
-                  <Form.Group className="mb-3" controlId={`form${meal}`}>
-                    <Form.Label>Recipe</Form.Label>
-                    <Form.Control type="text" placeholder={`Enter ${meal} recipe`} />
-                  </Form.Group>
-                  <Button variant="primary" onClick={() => handleShow(meal)}>
-                    Save Recipe
-                  </Button>
-                </form>
-              </Card.Body>
-            </card>
-            </div>
-        ))}
-    </div>
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-danger">{error}</p>}
+      <Row>
+        <Col>
+          <h2>Breakfast</h2>
+          <Row>
+            {meals.breakfast.map((meal, index) => (
+              <Col md={4} key={index} className="mb-4">
+                <Card>
+                  <Card.Img variant="top" src={meal.image} alt={meal.title} />
+                  <Card.Body>
+                    <Card.Title>{meal.title}</Card.Title>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleShowModal(meal)}
+                    >
+                      View Nutrients
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h2>Lunch</h2>
+          <Row>
+            {meals.lunch.map((meal, index) => (
+              <Col md={4} key={index} className="mb-4">
+                <Card>
+                  <Card.Img variant="top" src={meal.image} alt={meal.title} />
+                  <Card.Body>
+                    <Card.Title>{meal.title}</Card.Title>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleShowModal(meal)}
+                    >
+                      View Nutrients
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h2>Dinner</h2>
+          <Row>
+            {meals.dinner.map((meal, index) => (
+              <Col md={4} key={index} className="mb-4">
+                <Card>
+                  <Card.Img variant="top" src={meal.image} alt={meal.title} />
+                  <Card.Body>
+                    <Card.Title>{meal.title}</Card.Title>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleShowModal(meal)}
+                    >
+                      View Nutrients
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+      </Row>
 
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Nutrients Information</Modal.Title>
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedMeal?.title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{nutrients}</Modal.Body>
-      <Modal.Footer>
-      <Button variant="secondary" onClick={handleClose}>
-        Close
-      </Button>
-      </Modal.Footer>
-    </Modal>
-    </div>
+        <Modal.Body>
+          {/* Display nutrient information here */}
+          <p>Calories: {selectedMeal?.nutrition?.calories}</p>
+          <p>Protein: {selectedMeal?.nutrition?.protein}</p>
+          <p>Fat: {selectedMeal?.nutrition?.fat}</p>
+          <p>Carbohydrates: {selectedMeal?.nutrition?.carbohydrates}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 };
 
-export default MealPlanning; 
+export default MealPlanning;

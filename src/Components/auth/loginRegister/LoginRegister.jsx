@@ -75,7 +75,6 @@ const LoginRegister = () => {
 
   return (
     <div>
-      <Header />
       {userLoggedIn && navigate("/home")}
       <div className={`wrapper${action}`}>
         <div className="form-box login">
@@ -123,7 +122,7 @@ const LoginRegister = () => {
             <div className="register-link">
               <p>
                 Don't have an account?{" "}
-                <a href="#" onClick={registerLink}>
+                <a href="loginpage" onClick={registerLink}>
                   Register
                 </a>
               </p>
@@ -183,7 +182,7 @@ const LoginRegister = () => {
             <div className="register-link">
               <p>
                 Already have an account?{" "}
-                <a href="#" onClick={loginLink}>
+                <a href="loginregister" onClick={loginLink}>
                   Login
                 </a>
               </p>
@@ -191,6 +190,7 @@ const LoginRegister = () => {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
